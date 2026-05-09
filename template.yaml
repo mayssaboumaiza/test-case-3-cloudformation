@@ -1,0 +1,39 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "AWS Webapp CloudFormation Stack"
+
+Parameters:
+  Environment:
+    Type: String
+    Default: prod
+
+Resources:
+  WebAppBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "webapp-assets-${Environment}"
+      VersioningConfiguration:
+        Status: Enabled
+
+  WebAppEC2:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t3.medium
+      ImageId: ami-0c02fb55956c7d316
+
+  WebAppRDS:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBInstanceClass: db.t3.medium
+      Engine: postgres
+      MasterUsername: admin
+      MasterUserPassword: "{{resolve:ssm:/webapp/db/password}}"
+      AllocatedStorage: 20
+
+  WebAppQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub "webapp-queue-${Environment}"
+
+Outputs:
+  BucketName:
+    Value: !Ref WebAppBucket
