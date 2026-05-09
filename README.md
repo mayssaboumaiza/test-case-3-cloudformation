@@ -1,2 +1,2 @@
 # test-case-3-cloudformation
-Cloud Migrator test: CloudFormation YAML only
+AWS infrastructure via CloudFormation YAML.
